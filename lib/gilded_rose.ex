@@ -22,7 +22,6 @@ defmodule GildedRose do
     end
   end
 
-  defp apply_legacy_code?("Conjured" <> _), do: true
   defp apply_legacy_code?(_), do: false
 
   defp legacy_working_code(item) do

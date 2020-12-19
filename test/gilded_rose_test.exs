@@ -21,7 +21,7 @@ defmodule GildedRoseTest do
              %Item{name: "Elixir of the Mongoose", quality: 6, sell_in: 4},
              %Item{name: "Sulfuras, Hand of Ragnaros", quality: 80, sell_in: 0},
              %Item{name: "Backstage passes to a TAFKAL80ETC concert", quality: 21, sell_in: 14},
-             %Item{name: "Conjured Mana Cake", quality: 5, sell_in: 2}
+             %Item{name: "Conjured Mana Cake", quality: 4, sell_in: 2}
            ] = GildedRose.update_quality(gilded_rose)
   end
 end
