@@ -22,7 +22,6 @@ defmodule GildedRose do
     end
   end
 
-  defp apply_legacy_code?("Backstage passes" <> _), do: true
   defp apply_legacy_code?("Sulfuras" <> _), do: true
   defp apply_legacy_code?("Conjured" <> _), do: true
   defp apply_legacy_code?(_), do: false
