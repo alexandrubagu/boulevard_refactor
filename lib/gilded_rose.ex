@@ -1,29 +1,20 @@
 defmodule GildedRose do
-  use Agent
+  @moduledoc false
+
   alias GildedRose.Item
 
-  def new() do
-    {:ok, agent} =
-      Agent.start_link(fn ->
-        [
-          Item.new("+5 Dexterity Vest", 10, 20),
-          Item.new("Aged Brie", 2, 0),
-          Item.new("Elixir of the Mongoose", 5, 7),
-          Item.new("Sulfuras, Hand of Ragnaros", 0, 80),
-          Item.new("Backstage passes to a TAFKAL80ETC concert", 15, 20),
-          Item.new("Conjured Mana Cake", 3, 6)
-        ]
-      end)
+  defstruct items: []
 
-    agent
-  end
+  @type t :: %__MODULE__{
+          items: [Item.t()]
+        }
 
-  def items(agent), do: Agent.get(agent, & &1)
+  @spec new([Item.t()]) :: t
+  def new(items), do: %__MODULE__{items: items}
 
-  def update_quality(agent) do
-    for i <- 0..(Agent.get(agent, &length/1) - 1) do
-      item = Agent.get(agent, &Enum.at(&1, i))
-
+  @spec update_quality(t) :: [Item.t()]
+  def update_quality(%__MODULE__{items: items}) do
+    for item <- items do
       item =
         cond do
           item.name != "Aged Brie" && item.name != "Backstage passes to a TAFKAL80ETC concert" ->
@@ -91,48 +82,43 @@ defmodule GildedRose do
             item
         end
 
-      item =
-        cond do
-          item.sell_in < 0 ->
-            cond do
-              item.name != "Aged Brie" ->
-                cond do
-                  item.name != "Backstage passes to a TAFKAL80ETC concert" ->
-                    cond do
-                      item.quality > 0 ->
-                        cond do
-                          item.name != "Sulfuras, Hand of Ragnaros" ->
-                            %{item | quality: item.quality - 1}
+      cond do
+        item.sell_in < 0 ->
+          cond do
+            item.name != "Aged Brie" ->
+              cond do
+                item.name != "Backstage passes to a TAFKAL80ETC concert" ->
+                  cond do
+                    item.quality > 0 ->
+                      cond do
+                        item.name != "Sulfuras, Hand of Ragnaros" ->
+                          %{item | quality: item.quality - 1}
 
-                          true ->
-                            item
-                        end
+                        true ->
+                          item
+                      end
 
-                      true ->
-                        item
-                    end
+                    true ->
+                      item
+                  end
 
-                  true ->
-                    %{item | quality: item.quality - item.quality}
-                end
+                true ->
+                  %{item | quality: item.quality - item.quality}
+              end
 
-              true ->
-                cond do
-                  item.quality < 50 ->
-                    %{item | quality: item.quality + 1}
+            true ->
+              cond do
+                item.quality < 50 ->
+                  %{item | quality: item.quality + 1}
 
-                  true ->
-                    item
-                end
-            end
+                true ->
+                  item
+              end
+          end
 
-          true ->
-            item
-        end
-
-      Agent.update(agent, &List.replace_at(&1, i, item))
+        true ->
+          item
+      end
     end
-
-    :ok
   end
 end
